@@ -6,9 +6,11 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 using System.Xml;
 
 namespace feladat06
@@ -24,8 +26,9 @@ namespace feladat06
             dataGridView1.DataSource = Rates;
 
             Webszolgaltatashivas();
-
             XMLfeldolgozas();
+            drawDiagram();
+
         }
 
         public string Webszolgaltatashivas()
@@ -66,6 +69,25 @@ namespace feladat06
                 if (unit != 0)
                     rate.Value = value / unit;
             }
+        }
+
+        public void drawDiagram()
+        {
+            chartRateData.DataSource = Rates;
+
+            var series = chartRateData.Series[0];
+            series.ChartType = SeriesChartType.Line;
+            series.XValueMember = "Date";
+            series.YValueMembers = "Value";
+            series.BorderWidth = 2;
+
+            var legend = chartRateData.Legends[0];
+            legend.Enabled = false;
+
+            var chartArea = chartRateData.ChartAreas[0];
+            chartArea.AxisX.MajorGrid.Enabled = false;
+            chartArea.AxisY.MajorGrid.Enabled = false;
+            chartArea.AxisY.IsStartedFromZero = false;
         }
     }
 }
