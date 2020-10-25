@@ -20,6 +20,9 @@ namespace week07_szimulacio
 
         Random rng = new Random(1234);
 
+        List<int> Males = new List<int>();
+        List<int> Females = new List<int>();
+
         public Form1()
         {
             InitializeComponent();
@@ -27,23 +30,6 @@ namespace week07_szimulacio
             Population = GetPopulation(@"C:\Temp\nép-teszt.csv");
             BirthProbabilities = GetBirthProbabilities(@"C:\Temp\születés.csv");
             DeathProbabilities = GetDeathProbabilities(@"C:\Temp\halál.csv");
-
-            for (int year = 2005; year <= 2024; year++)
-            {
-                for (int i = 0; i < Population.Count; i++)
-                {
-                    SimStep(year, Population[i]);
-                }
-
-                int nbrOfMales = (from x in Population
-                                  where x.Gender == Gender.Male && x.IsAlive
-                                  select x).Count();
-                int nbrOfFemales = (from x in Population
-                                    where x.Gender == Gender.Female && x.IsAlive
-                                    select x).Count();
-                Console.WriteLine(
-                    string.Format("Év:{0} Fiúk:{1} Lányok:{2}", year, nbrOfMales, nbrOfFemales));
-            }
         }
 
         public List<Person> GetPopulation(string csvpath)
@@ -106,6 +92,30 @@ namespace week07_szimulacio
             return birthProbabilities;
         }
 
+        private void Simulation()
+        {
+            for (int year = 2005; year <= numericUpDown1.Value; year++)
+            {
+                for (int i = 0; i < Population.Count; i++)
+                {
+                    SimStep(year, Population[i]);
+                }
+
+                int nbrOfMales = (from x in Population
+                                  where x.Gender == Gender.Male && x.IsAlive
+                                  select x).Count();
+                int nbrOfFemales = (from x in Population
+                                    where x.Gender == Gender.Female && x.IsAlive
+                                    select x).Count();
+
+                Males.Add(nbrOfMales);
+                Females.Add(nbrOfFemales);
+
+                Console.WriteLine(
+                    string.Format("Év:{0} Fiúk:{1} Lányok:{2}", year, nbrOfMales, nbrOfFemales));
+            }
+        }
+
         private void SimStep(int year, Person person)
         {
             if (!person.IsAlive) return;
@@ -132,6 +142,45 @@ namespace week07_szimulacio
                     Population.Add(újszülött);
                 }
             }
+        }
+
+        private void btnStart_Click(object sender, EventArgs e)
+        {
+            Males.Clear();
+            Females.Clear();
+            richTextBox1.Clear();
+
+            Simulation();
+            DisplayResults();
+        }
+
+        private void btnBrowse_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+
+            if (ofd.ShowDialog() != DialogResult.OK) return;
+
+            textBox1.Text = ofd.FileName;
+
+            string szoveg = textBox1.Text;
+
+            Population = GetPopulation(@szoveg);
+        }
+
+        private void DisplayResults()
+        {
+            int year = 2005;
+            string szoveg = "";
+
+            for (int i = 0; i < Males.Count; i++)
+            {
+                szoveg = szoveg + "Szimulációs év: " + year.ToString() + "\n" +
+                    "\t" + "Fiúk: " + Males[i].ToString() + "\n" +
+                    "\t" + "Lányok: " + Females[i].ToString() + "\n" + "\n";
+                year++;
+            }
+
+            richTextBox1.Text = szoveg;
         }
     }
 }
