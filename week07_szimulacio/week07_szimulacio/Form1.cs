@@ -21,6 +21,10 @@ namespace week07_szimulacio
         public Form1()
         {
             InitializeComponent();
+
+            Population = GetPopulation(@"C:\Temp\nép.csv");
+            BirthProbabilities = GetBirthProbabilities(@"C:\Temp\születés.csv");
+            DeathProbabilities = GetDeathProbabilities(@"C:\Temp\halál.csv");
         }
 
         public List<Person> GetPopulation(string csvpath)
