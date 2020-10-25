@@ -10,6 +10,6 @@ namespace week07_szimulacio.Entities
     {
         public Gender Gender { get; set; }
         public int Age { get; set; }
-        public double Prop { get; set; }
+        public double Prob { get; set; }
     }
 }
